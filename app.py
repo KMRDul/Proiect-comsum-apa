@@ -1,26 +1,51 @@
-import sqlite3
 import os
+import sqlite3
 from cache import cache
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from database import init_db, add_user, get_fake_users, get_users
 from functools import wraps
 import random
 from datetime import datetime
+from jinja2 import FileSystemLoader
 
+# Definim calea de bază a proiectului
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, 'data')
+TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+
+# Creăm directoarele necesare dacă nu există
+for directory in [DATA_DIR, TEMPLATE_DIR, STATIC_DIR]:
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+# Verificăm că template-urile există
+print(f"Template directory: {TEMPLATE_DIR}")
+print(f"Template files: {os.listdir(TEMPLATE_DIR)}")
+print(f"Static directory: {STATIC_DIR}")
+if os.path.exists(STATIC_DIR):
+    print(f"Static files: {os.listdir(STATIC_DIR)}")
+
+# Inițializăm aplicația Flask
 app = Flask(__name__)
+app.static_folder = STATIC_DIR
+app.static_url_path = '/static'
+app.jinja_loader = FileSystemLoader(TEMPLATE_DIR)
 app.secret_key = os.urandom(24)
 app.config['SESSION_TYPE'] = 'filesystem'
 
 # Database configuration
-DATABASE_PATH = os.path.join('data', 'database.db')
-USERS_DB_PATH = os.path.join('data', 'users.db')
+DATABASE_PATH = os.path.join(DATA_DIR, 'database.db')
+USERS_DB_PATH = os.path.join(DATA_DIR, 'users.db')
 
 def get_db():
+    os.makedirs(os.path.dirname(DATABASE_PATH), exist_ok=True)
     db = sqlite3.connect(DATABASE_PATH)
     db.row_factory = sqlite3.Row
     return db
 
 def get_users_db():
+    os.makedirs(os.path.dirname(USERS_DB_PATH), exist_ok=True)
     db = sqlite3.connect(USERS_DB_PATH)
     db.row_factory = sqlite3.Row
     return db
@@ -70,12 +95,12 @@ def login():
             return redirect(url_for('index'))
         else:
             flash('Credențiale incorecte!' if session.get('language', 'ro') == 'ro' else 'Invalid credentials!')
-            return render_template('login.html')
+            return render_template('login.html', language=session.get('language', 'ro'))
     
     if 'username' in session:
         return redirect(url_for('index'))
         
-    return render_template('login.html')
+    return render_template('login.html', language=session.get('language', 'ro'))
 
 @app.route('/logout')
 def logout():
