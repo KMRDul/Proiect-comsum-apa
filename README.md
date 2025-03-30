@@ -24,5 +24,6 @@ Proiectul va trebuii sa arate persoanele din bloc, consumul de apa pe care l-a f
 
 ➕ Pagina de login/logout, ca default va fi admin/admin\
 ➖ Suma datorata nu mai exista in lista de consum\
+➕ Adaugat consumul de apa in timp real, la fiecare 5 secunde se va actualiza consumul de apa la 3 locatari deodata
 ➕ Update la lista de consum, acum va arata costul consumului de apa\
-🔃 Modificari aduse la butonul de schimba limba, acum va schimba limba din ENG -> RO, vice-versa 
+🔃 Modificari aduse la butonul de schimba limba, acum va schimba limba din ENG -> RO, vice-versa
