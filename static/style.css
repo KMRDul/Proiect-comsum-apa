@@ -1,0 +1,118 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.table-container {
+    max-width: 800px; /* Lățimea maximă a tabelului */
+    margin: auto; /* Centrează tabelul pe pagină */
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #4cae4c;
+}
+
+form {
+    display: flex;
+    justify-content: center; /* Centrează formularul */
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px; /* Spațiu între input și buton */
+}
+
+input[type="submit"] {
+    padding: 10px 15px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #4cae4c;
+}
+
+table {
+    width: 100%; /* Tabelul ocupă întreaga lățime a containerului */
+    border-collapse: collapse; /* Elimină spațiile dintre celule */
+    margin-top: 20px; /* Spațiu între formular și tabel */
+}
+
+th, td {
+    padding: 15px; /* Spațiu interior pentru celule */
+    text-align: center; /* Centrează textul în celule */
+    border-bottom: 1px solid #ddd; /* Linie de separare între rânduri */
+}
+
+th {
+    background-color: #f2f2f2; /* Fundal pentru antet */
+}
+.language-button {
+    position: absolute; /* Poziționează butonul în colțul din dreapta sus */
+    top: 10px; /* Distanța de la partea de sus */
+    right: 10px; /* Distanța de la marginea dreaptă */
+}
+
+.language-button a {
+    display: inline-block;
+    width: 30px; /* Lățimea butonului */
+    height: 30px; /* Înălțimea butonului */
+    text-align: center; /* Centrează textul (globul) */
+    line-height: 30px; /* Aliniază globul vertical */
+    background-color: #5cb85c; /* Fundal verde */
+    color: white; /* Culoarea globului */
+    border-radius: 5px; /* Colțuri rotunjite */
+    text-decoration: none; /* Elimină sublinierea */
+    font-size: 18px; /* Dimensiunea globului */
+}
+
+.language-button a:hover {
+    background-color: #4cae4c; /* Schimbă culoarea la hover */
+}

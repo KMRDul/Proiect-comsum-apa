@@ -1,0 +1,55 @@
+import sqlite3
+import random
+
+
+def init_db():
+    conn = sqlite3.connect('data/users.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            apartment TEXT NOT NULL,
+            amount_due REAL,
+            amount_paid REAL DEFAULT 0,
+            is_paid BOOLEAN DEFAULT 0
+        )
+    ''')
+    
+    # Verifică dacă există deja utilizatori
+    cursor.execute('SELECT COUNT(*) FROM users')
+    if cursor.fetchone()[0] == 0:
+        # Adaugă utilizatorii inițiali doar dacă tabela este goală
+        fake_names = [
+            "John Doe", "Jane Smith", "Alice Johnson", "Bob Brown", "Charlie Davis",
+            "Diana Prince", "Ethan Hunt", "Fiona Gallagher", "George Costanza", "Hannah Montana"
+        ]
+        for i, name in enumerate(fake_names, 1):
+            amount_due = random.uniform(50, 150)  # Generăm suma o singură dată pentru fiecare utilizator
+            cursor.execute('INSERT INTO users (name, apartment, amount_due) VALUES (?, ?, ?)',
+                       (name, str(i), amount_due))
+    
+    conn.commit()
+    conn.close()
+
+def get_users():
+    conn = sqlite3.connect('data/users.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, name, apartment, amount_due, amount_paid, is_paid FROM users')
+    users = cursor.fetchall()
+    conn.close()
+    # Convertim amount_due și amount_paid în float
+    return [(user[0], user[1], user[2], float(user[3]), float(user[4]), user[5]) for user in users]
+
+def add_user(name, amount_due):
+    conn = sqlite3.connect('data/users.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT COUNT(*) FROM users')
+    apartment_number = cursor.fetchone()[0] + 1  # Crește cu 1 pentru a obține următorul număr de apartament
+    cursor.execute('INSERT INTO users (name, apartment, amount_due) VALUES (?, ?, ?)',
+                   (name, str(apartment_number), amount_due))
+    conn.commit()
+    conn.close()
+
+def get_fake_users():
+    return get_users()  # Acum returnăm utilizatorii reali din baza de date
