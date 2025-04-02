@@ -5,18 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Management Consum Apă</title>
+    <style>
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .clock {
+            font-size: 1.2em;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .title-clock {
+            text-align: center;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin: 10px 0;
+        }
+        .action-buttons a {
+            padding: 8px 15px;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border-radius: 4px;
+        }
+        .action-buttons a:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>{{ 'Management Consum Apă' if language == 'ro' else 'Water Consumption Management' }}</h1>
-        <div class="language-button">
+        <div class="header-container">
+            <div class="clock" id="romania-clock"></div>
+            <div class="title-clock">
+                <h1>{{ 'Management Consum Apă' if language == 'ro' else 'Water Consumption Management' }}</h1>
+            </div>
+        </div>
+        <div class="action-buttons">
             <a href="{{ url_for('change_language') }}" title="{{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}">
-                🌐
+                🌐 {{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}
+            </a>
+            <a href="{{ url_for('print_report') }}" title="{{ 'Generează PDF' if language == 'ro' else 'Generate PDF' }}">
+                📄 {{ 'Generează PDF' if language == 'ro' else 'Generate PDF' }}
             </a>
         </div>
         <div>
             {% block content %}{% endblock %}
         </div>
     </div>
+
+    <script>
+        function updateClock() {
+            fetch('/api/time')
+                .then(response => response.json())
+                .then(data => {
+                    const clock = document.getElementById('romania-clock');
+                    const hour = String(data.hour).padStart(2, '0');
+                    const minute = String(data.minute).padStart(2, '0');
+                    clock.textContent = `🕐 ${hour}:${minute}`;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Update clock immediately and then every minute
+        updateClock();
+        setInterval(updateClock, 60000);
+    </script>
 </body>
 </html>
