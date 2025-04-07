@@ -49,14 +49,13 @@
                 <h1>{{ 'Management Consum Apă' if language == 'ro' else 'Water Consumption Management' }}</h1>
             </div>
         </div>
+        {% if 'username' in session %}
         <div class="action-buttons">
             <a href="{{ url_for('change_language') }}" title="{{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}">
                 🌐 {{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}
             </a>
-            <a href="{{ url_for('print_report') }}" title="{{ 'Generează PDF' if language == 'ro' else 'Generate PDF' }}">
-                📄 {{ 'Generează PDF' if language == 'ro' else 'Generate PDF' }}
-            </a>
         </div>
+        {% endif %}
         <div>
             {% block content %}{% endblock %}
         </div>
