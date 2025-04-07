@@ -197,5 +197,6 @@ def time_endpoint():
     """Get current time in Romania"""
     return jsonify(get_romania_time())
 
+print("test")
 if __name__ == '__main__':
     app.run(debug=True)
