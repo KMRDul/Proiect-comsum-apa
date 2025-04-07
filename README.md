@@ -31,7 +31,7 @@ Proiectul va trebuii sa arate persoanele din bloc, consumul de apa pe care l-a f
 <b> 03/4 </b>
 
 ➕ API cu ceasul Romaniei\
-🔃 Modificari aduse butoanelor de Schimba Limba si Descarca PDF\
+🔃 Modificari aduse butoanelor de Schimba Limba si Descarca PDF
 
 <b> 07/4 </b>
 
