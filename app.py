@@ -1,14 +1,14 @@
 import os
 import sqlite3
+import logging
 from cache import cache
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, send_file
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from database import init_db, add_user, get_fake_users, get_users
 from functools import wraps
 import random
 from datetime import datetime
 from jinja2 import FileSystemLoader
 from api import get_romania_time
-from printer import TenantReportPrinter
 
 # Definim calea de bază a proiectului
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -35,6 +35,10 @@ app.static_url_path = '/static'
 app.jinja_loader = FileSystemLoader(TEMPLATE_DIR)
 app.secret_key = os.urandom(24)
 app.config['SESSION_TYPE'] = 'filesystem'
+
+# Configurare logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # Database configuration
 DATABASE_PATH = os.path.join(DATA_DIR, 'database.db')
@@ -183,44 +187,15 @@ def change_language():
     session['language'] = 'en' if session.get('language', 'ro') == 'ro' else 'ro'
     return redirect(url_for('index'))
 
+@app.route('/login_language')
+def login_language():
+    session['language'] = 'en' if session.get('language', 'ro') == 'ro' else 'ro'
+    return redirect(url_for('login'))
+
 @app.route('/api/time')
 def time_endpoint():
     """Get current time in Romania"""
     return jsonify(get_romania_time())
-
-@app.route('/print-report')
-@login_required
-def print_report():
-    """Generate and download PDF report with tenant information"""
-    try:
-        # Get tenant data from database
-        db = get_db()
-        cursor = db.cursor()
-        cursor.execute("""
-            SELECT users.name as nume, users.apartment as apartament,
-                   water_consumption.consumption as consum,
-                   water_consumption.payment as de_plata
-            FROM users
-            LEFT JOIN water_consumption ON users.id = water_consumption.user_id
-            WHERE water_consumption.consumption IS NOT NULL
-        """)
-        tenants_data = [dict(zip(['nume', 'apartament', 'consum', 'de_plata'], row)) 
-                       for row in cursor.fetchall()]
-        
-        # Generate PDF
-        pdf_path = os.path.join(BASE_DIR, 'raport_locatari.pdf')
-        printer = TenantReportPrinter()
-        printer.generate_report(tenants_data)
-        printer.save(pdf_path)
-        
-        return send_file(pdf_path,
-                        mimetype='application/pdf',
-                        as_attachment=True,
-                        download_name='raport_locatari.pdf')
-                        
-    except Exception as e:
-        flash(f'Eroare la generarea raportului: {str(e)}', 'error')
-        return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
