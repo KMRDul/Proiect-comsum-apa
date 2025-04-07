@@ -30,6 +30,11 @@ Proiectul va trebuii sa arate persoanele din bloc, consumul de apa pe care l-a f
 
 <b> 03/4 </b>
 
-➕ Buton de descarcare al PDF-ului cu consumul locatariilor (nefuctional momentan)\
 ➕ API cu ceasul Romaniei\
 🔃 Modificari aduse butoanelor de Schimba Limba si Descarca PDF\
+
+<b> 07/4 </b>
+
+➖ Am eliminat functia de generarea al PDF-ului intrucat nu descarca
+➕ Mai mult spatiu in total
+➖ Nervi in minus
