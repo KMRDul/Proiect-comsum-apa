@@ -35,6 +35,6 @@ Proiectul va trebuii sa arate persoanele din bloc, consumul de apa pe care l-a f
 
 <b> 07/4 </b>
 
-➖ Am eliminat functia de generarea al PDF-ului intrucat nu descarca
-➕ Mai mult spatiu in total
-➖ Nervi in minus
+➖ Am eliminat functia de generarea al PDF-ului intrucat nu descarca\
+➕ Mai mult spatiu in total\
+➖ Nervi in minus\
