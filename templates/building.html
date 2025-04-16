@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="header">
+        <h2>{{ 'Bloc' if language == 'ro' else 'Building' }} {{ building_number }}</h2>
+        <div class="header-actions">
+            <button id="addPersonBtn" class="action-button">{{ 'Adaugă Locatar' if language == 'ro' else 'Add Tenant' }}</button>
+            <button id="toggleDeleteBtn" class="action-button">{{ 'Șterge Locatar' if language == 'ro' else 'Delete Tenant' }}</button>
+            <button onclick="updateWaterData()" class="action-button">{{ 'Actualizează Apa' if language == 'ro' else 'Update Water' }}</button>
+            <a href="{{ url_for('index') }}" class="action-button">{{ 'Înapoi la Lista Blocuri' if language == 'ro' else 'Back to Buildings' }}</a>
+        </div>
+    </div>
+
+    <div id="addPersonForm" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>{{ 'Adaugă Locatar' if language == 'ro' else 'Add Tenant' }}</h3>
+            <form action="{{ url_for('add_user_route') }}" method="post">
+                <div class="form-group">
+                    <label for="apartment">{{ 'Apartament' if language == 'ro' else 'Apartment' }}</label>
+                    <input type="text" id="apartment" name="apartment" value="{{ building_number }}/" required>
+                </div>
+                <div class="form-group">
+                    <label for="name">{{ 'Nume' if language == 'ro' else 'Name' }}</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <button type="submit" class="submit-button">{{ 'Adaugă' if language == 'ro' else 'Add' }}</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>{{ 'Apartament' if language == 'ro' else 'Apartment' }}</th>
+                    <th>{{ 'Nume' if language == 'ro' else 'Name' }}</th>
+                    <th>{{ 'Sumă Plătită' if language == 'ro' else 'Amount Paid' }}</th>
+                    <th>{{ 'Consum Apă' if language == 'ro' else 'Water Usage' }}</th>
+                    <th>{{ 'Total de Plată' if language == 'ro' else 'Total to Pay' }}</th>
+                    <th class="delete-column hidden">{{ 'Șterge' if language == 'ro' else 'Delete' }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.apartment }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.amount_paid }} RON</td>
+                    <td>{{ user.water_usage if user.water_usage != None else '-' }}</td>
+                    <td>{{ (user.water_usage * water_price) - user.amount_paid if user.water_usage != None else '-' }} RON</td>
+                    <td class="delete-column hidden">
+                        <button onclick="deleteUser({{ user.id }})" class="delete-button">
+                            <span class="delete-icon">×</span>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const language = document.documentElement.lang || 'ro';
+    
+    // Model și butoane
+    const modal = document.getElementById('addPersonForm'),
+          addBtn = document.getElementById('addPersonBtn'),
+          closeBtn = document.getElementsByClassName('close')[0],
+          toggleDeleteBtn = document.getElementById('toggleDeleteBtn'),
+          deleteButtons = document.getElementsByClassName('delete-button');
+
+    // Funcționalitate pentru modal
+    addBtn.onclick = function() {
+        modal.style.display = 'block';
+    }
+
+    closeBtn.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Funcționalitate pentru butonul de ștergere
+    toggleDeleteBtn.onclick = function() {
+        const isDeleting = toggleDeleteBtn.classList.toggle('active');
+        const deleteColumns = document.getElementsByClassName('delete-column');
+        
+        for (let col of deleteColumns) {
+            col.classList.toggle('hidden');
+        }
+        
+        toggleDeleteBtn.textContent = isDeleting ? 
+            (language === 'ro' ? 'Anulează Ștergerea' : 'Cancel Delete') : 
+            (language === 'ro' ? 'Șterge Locatar' : 'Delete Tenant');
+    }
+
+    // Funcție pentru ștergerea unui utilizator
+    function deleteUser(userId) {
+        if (confirm(language === 'ro' ? 'Ești sigur că vrei să ștergi acest locatar?' : 'Are you sure you want to delete this tenant?')) {
+            fetch(`/delete_user/${userId}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    location.reload();
+                } else {
+                    alert('A apărut o eroare!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('A apărut o eroare!');
+            });
+        }
+    }
+
+    // Funcție pentru actualizarea datelor despre apă
+    function updateWaterData() {
+        fetch('/update_water')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    location.reload();
+                } else {
+                    alert('A apărut o eroare!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('A apărut o eroare!');
+            });
+    }
+</script>
+{% endblock %}

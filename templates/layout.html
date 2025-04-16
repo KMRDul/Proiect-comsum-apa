@@ -33,11 +33,11 @@
             padding: 8px 15px;
             text-decoration: none;
             color: white;
-            background-color: #007bff;
+            background-color: #4CAF50;
             border-radius: 4px;
         }
         .action-buttons a:hover {
-            background-color: #0056b3;
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -51,6 +51,9 @@
         </div>
         {% if 'username' in session %}
         <div class="action-buttons">
+            <button id="theme-toggle" class="theme-btn" title="{{ 'Comută tema' if language == 'ro' else 'Toggle theme' }}">
+                🌙 {{ 'Mod întunecat' if language == 'ro' else 'Dark mode' }}
+            </button>
             <a href="{{ url_for('change_language') }}" title="{{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}">
                 🌐 {{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}
             </a>
@@ -77,6 +80,32 @@
         // Update clock immediately and then every minute
         updateClock();
         setInterval(updateClock, 60000);
+
+        // Dark/Light mode toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const savedTheme = localStorage.getItem('theme');
+
+        function updateThemeText() {
+            const isDark = document.body.classList.contains('dark-mode');
+            themeToggle.innerHTML = isDark ? 
+                '☀️ ' + (document.documentElement.lang === 'ro' ? 'Mod luminos' : 'Light mode') :
+                '🌙 ' + (document.documentElement.lang === 'ro' ? 'Mod întunecat' : 'Dark mode');
+        }
+
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.body.classList.add('dark-mode');
+        }
+        updateThemeText();
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.add('theme-transition');
+            setTimeout(() => document.body.classList.remove('theme-transition'), 300);
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeText();
+        });
     </script>
 </body>
 </html>

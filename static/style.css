@@ -1,6 +1,9 @@
 body {
+    transition: background-color 0.3s, color 0.3s;
+
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
+    color: #222;
     margin: 0;
     padding: 20px;
 }
@@ -19,6 +22,7 @@ h1 {
 }
 
 .container {
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
     max-width: 900px;
     margin: auto;
     background: white;
@@ -94,6 +98,17 @@ th, td {
 th {
     background-color: #f2f2f2; /* Fundal pentru antet */
 }
+
+th.dark-mode {
+    background-color: #444;
+    color: #fff;
+}
+
+td.dark-mode {
+    background-color: #555;
+    color: #fff;
+}
+
 .language-button {
     position: absolute; /* Poziționează butonul în colțul din dreapta sus */
     top: 10px; /* Distanța de la partea de sus */
@@ -115,4 +130,168 @@ th {
 
 .language-button a:hover {
     background-color: #4cae4c; /* Schimbă culoarea la hover */
+}
+
+/* Dark mode styles */
+body.theme-transition * {
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s !important;
+}
+
+body.dark-mode {
+    background-color: #181a1b;
+    color: #f4f4f4;
+}
+
+body.dark-mode .container,
+body.dark-mode .table-container {
+    background: #23272b;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode table {
+    background-color: #23272b;
+    color: #f4f4f4;
+}
+
+body.dark-mode th {
+    background-color: #2c3034;
+}
+
+body.dark-mode tr:hover {
+    background-color: #2c3034;
+}
+
+body.dark-mode input[type="text"],
+body.dark-mode input[type="password"],
+body.dark-mode input[type="number"] {
+    background-color: #2c3034;
+    color: #f4f4f4;
+    border-color: #495057;
+}
+
+/* Theme button styles */
+.theme-btn {
+    padding: 8px 15px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.theme-btn:hover {
+    background-color: #5a6268;
+}
+
+body.dark-mode .theme-btn {
+    background-color: #495057;
+}
+
+body.dark-mode .theme-btn:hover {
+    background-color: #5a6268;
+}
+
+body.dark-mode .action-buttons a {
+    background-color: #495057;
+}
+
+body.dark-mode .action-buttons a:hover {
+    background-color: #5a6268;
+}
+
+/* Login page styles */
+.login-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    margin: 2rem auto;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    color: #555;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+.form-group input {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.login-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.login-button:hover {
+    background-color: #45a049;
+}
+
+.flash-messages {
+    margin-bottom: 1rem;
+}
+
+.flash-message {
+    padding: 0.75rem;
+    background-color: #ffebee;
+    color: #c62828;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Dark mode styles for login page */
+body.dark-mode .login-container {
+    background-color: #23272b;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .form-group label {
+    color: #e1e1e1;
+}
+
+body.dark-mode .form-group input {
+    background-color: #2c3034;
+    border-color: #495057;
+    color: #f4f4f4;
+}
+
+body.dark-mode .login-button {
+    background-color: #3a7fd5;
+}
+
+body.dark-mode .login-button:hover {
+    background-color: #2d63a7;
+}
+
+body.dark-mode .flash-message {
+    background-color: #442326;
+    color: #ff8a80;
 }

@@ -25,6 +25,15 @@ def init_db():
             is_paid BOOLEAN DEFAULT 0
         )
     ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS water_consumption (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            usage REAL NOT NULL,
+            month TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
     
     # Verifică dacă există deja utilizatori
     cursor.execute('SELECT COUNT(*) FROM users')
