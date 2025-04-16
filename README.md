@@ -38,3 +38,8 @@ Proiectul va trebuii sa arate persoanele din bloc, consumul de apa pe care l-a f
 ➖ Am eliminat functia de generarea al PDF-ului intrucat nu descarca\
 ➕ Mai mult spatiu in total\
 ➖ Nervi in minus
+
+<b> 14/03 </b>
+
+➕ Am adaugat buton de Dark mode\
+➕ Am adaugat butoane de adaugare respectiv eliminare persoana din bloc
