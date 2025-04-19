@@ -43,19 +43,19 @@
 </head>
 <body>
     <div class="container">
-        <div class="header-container">
+        <div class="header-container" style="display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:20px;">
             <div class="clock" id="romania-clock"></div>
-            <div class="title-clock">
+            <div class="title-clock" style="flex:1;text-align:center;">
                 <h1>{{ 'Management Consum Apă' if language == 'ro' else 'Water Consumption Management' }}</h1>
             </div>
+            {% if 'username' in session %}
+            <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);">
+                <a href="{{ url_for('change_language') }}" title="{{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}" style="padding:8px 15px;text-decoration:none;color:white;background-color:#007bff;border-radius:4px;font-weight:bold;font-size:1em;">
+                    🌐 {{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}
+                </a>
+            </div>
+            {% endif %}
         </div>
-        {% if 'username' in session %}
-        <div class="action-buttons">
-            <a href="{{ url_for('change_language') }}" title="{{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}">
-                🌐 {{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}
-            </a>
-        </div>
-        {% endif %}
         <div>
             {% block content %}{% endblock %}
         </div>

@@ -4,6 +4,7 @@ import logging
 from cache import cache
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from database import init_db, add_user, get_fake_users, get_users
+
 from functools import wraps
 import random
 from datetime import datetime
@@ -93,18 +94,16 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        
         if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
             session['username'] = username
-            session['language'] = session.get('language', 'ro')  # Setăm limba implicită la prima autentificare
-            session.permanent = True
-            return redirect(url_for('index'))
+            session['language'] = session.get('language', 'ro')
+            return redirect(url_for('blocuri'))
         else:
-            flash('Credențiale incorecte!' if session.get('language', 'ro') == 'ro' else 'Invalid credentials!')
+            flash('Credentiale incorecte!' if session.get('language', 'ro') == 'ro' else 'Invalid credentials!')
             return render_template('login.html', language=session.get('language', 'ro'))
     
     if 'username' in session:
-        return redirect(url_for('index'))
+        return redirect(url_for('blocuri'))
         
     return render_template('login.html', language=session.get('language', 'ro'))
 
@@ -196,6 +195,135 @@ def login_language():
 def time_endpoint():
     """Get current time in Romania"""
     return jsonify(get_romania_time())
+
+@app.route('/template')
+def template_page():
+    # Folosește același context de limbă ca pagina principală și trimite lista de utilizatori
+    language = session.get('language', 'ro')
+    water_db = get_db()
+    users_db = get_users_db()
+    users = users_db.execute('SELECT * FROM users').fetchall()
+    water_data = {}
+    for user in users:
+        last_consumption = water_db.execute('''SELECT consumption FROM water_consumption \
+                                           WHERE user_id = ? ORDER BY timestamp DESC LIMIT 1''', \
+                                        (user['id'],)).fetchone()
+        water_data[user['id']] = last_consumption['consumption'] if last_consumption else 0
+    water_db.close()
+    users_db.close()
+    return render_template('template_page.html', language=language, users=users, water_data=water_data, water_price=6)
+
+from flask import redirect, url_for
+from database import init_blocks_table, add_block, get_blocks, delete_block
+
+# Inițializează tabela de blocuri la pornire și adaugă blocurile de bază dacă nu există
+init_blocks_table()
+def ensure_default_blocks():
+    blocks = get_blocks()
+    default_blocks = [
+        {'name': 'Bloc A', 'address': 'Str. Libertății 12'},
+        {'name': 'Bloc B', 'address': 'Bd. Unirii 5'},
+        {'name': 'Bloc C', 'address': 'Str. Eminescu 8'}
+    ]
+    existing_names = set((b['name'], b['address']) for b in blocks)
+    for block in default_blocks:
+        if (block['name'], block['address']) not in existing_names:
+            add_block(block['name'], block['address'])
+ensure_default_blocks()
+
+# Pagina cu blocurile manageriate de utilizator
+@app.route('/blocuri', methods=['GET', 'POST'])
+@login_required
+def blocuri():
+    if request.method == 'POST':
+        if 'delete_block_id' in request.form:
+            delete_block(request.form['delete_block_id'])
+            return redirect(url_for('blocuri'))
+        else:
+            name = request.form.get('block_name')
+            address = request.form.get('block_address')
+            if name and address:
+                add_block(name, address)
+                return redirect(url_for('blocuri'))
+    blocks = get_blocks()
+    return render_template('template2.html', blocks=blocks, language=session.get('language', 'ro'))
+
+# Detalii bloc (mock)
+@app.route('/add_tenant', methods=['POST'])
+@login_required
+def add_tenant():
+    apartment = request.form['apartment']
+    name = request.form['name']
+    # Suma implicită de plată pentru un locatar nou (poate fi ajustată)
+    amount_due = 100
+    add_user(name, apartment, amount_due)
+    return redirect(url_for('block_detail', block_id=1))
+
+@app.route('/bloc/<int:block_id>')
+@login_required
+def block_detail(block_id):
+    from database import get_blocks
+    blocks = get_blocks()
+    block = next((b for b in blocks if b['id'] == block_id), None)
+    if not block:
+        return 'Bloc inexistent', 404
+    water_db = get_db()
+    users_db = get_users_db()
+    users = users_db.execute('SELECT * FROM users').fetchall()
+    # Scramble numele locatarilor doar pentru Bloc B și Bloc C
+    if block_id in [2, 3]:
+        import random
+        users = list(users)
+        users_shuffled = list(users)
+        random.shuffle(users_shuffled)
+        # Înlocuim doar numele, restul datelor rămân la fel
+        users = [
+            (user[0], users_shuffled[i][1], user[2], user[3], user[4], user[5])
+            for i, user in enumerate(users)
+        ]
+        # Transformăm tuplurile în dict-uri pentru template
+        users = [
+            {
+                'id': u[0],
+                'name': u[1],
+                'apartment': u[2],
+                'amount_due': u[3],
+                'amount_paid': u[4],
+                'is_paid': u[5]
+            }
+            for u in users
+        ]
+    else:
+        # Pentru Bloc A sau altele, transformăm doar dacă nu e deja dict
+        if users and isinstance(users[0], tuple):
+            users = [
+                {
+                    'id': u[0],
+                    'name': u[1],
+                    'apartment': u[2],
+                    'amount_due': u[3],
+                    'amount_paid': u[4],
+                    'is_paid': u[5]
+                }
+                for u in users
+            ]
+    water_data = {}
+    for user in users:
+        last_consumption = water_db.execute('''SELECT consumption FROM water_consumption 
+                                           WHERE user_id = ? ORDER BY timestamp DESC LIMIT 1''', 
+                                        (user['id'],)).fetchone()
+        water_data[user['id']] = last_consumption['consumption'] if last_consumption else 0
+    water_db.close()
+    users_db.close()
+    return render_template('template_page.html', users=users, water_data=water_data, water_price=6, block_id=block_id, block_name=block['name'], block_address=block['address'])
+
+@app.route('/delete_tenant/<int:user_id>', methods=['POST'])
+@login_required
+def delete_tenant(user_id):
+    from database import delete_user
+    delete_user(user_id)
+    from flask import request
+    return redirect(request.referrer or url_for('index'))
 
 print("test")
 if __name__ == '__main__':

@@ -52,16 +52,62 @@ def get_users():
     # Convertim amount_due și amount_paid în float
     return [(user[0], user[1], user[2], float(user[3]), float(user[4]), user[5]) for user in users]
 
-def add_user(name, amount_due):
+def add_user(name, apartment, amount_due):
     db_path = os.path.join(DATA_DIR, 'users.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute('SELECT COUNT(*) FROM users')
-    apartment_number = cursor.fetchone()[0] + 1  # Crește cu 1 pentru a obține următorul număr de apartament
     cursor.execute('INSERT INTO users (name, apartment, amount_due) VALUES (?, ?, ?)',
-                   (name, str(apartment_number), amount_due))
+                   (name, apartment, amount_due))
+    conn.commit()
+    conn.close()
+
+def delete_user(user_id):
+    db_path = os.path.join(DATA_DIR, 'users.db')
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM users WHERE id = ?', (user_id,))
     conn.commit()
     conn.close()
 
 def get_fake_users():
     return get_users()  # Acum returnăm utilizatorii reali din baza de date
+
+# --- Blocuri ---
+def init_blocks_table():
+    db_path = os.path.join(DATA_DIR, 'database.db')
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS blocks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            address TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+def add_block(name, address):
+    db_path = os.path.join(DATA_DIR, 'database.db')
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO blocks (name, address) VALUES (?, ?)', (name, address))
+    conn.commit()
+    conn.close()
+
+def get_blocks():
+    db_path = os.path.join(DATA_DIR, 'database.db')
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, name, address FROM blocks')
+    blocks = [ {'id': row[0], 'name': row[1], 'address': row[2]} for row in cursor.fetchall() ]
+    conn.close()
+    return blocks
+
+def delete_block(block_id):
+    db_path = os.path.join(DATA_DIR, 'database.db')
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM blocks WHERE id = ?', (block_id,))
+    conn.commit()
+    conn.close()

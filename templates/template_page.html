@@ -1,0 +1,257 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="action-buttons" style="margin-bottom: 20px; gap: 10px; display: flex; justify-content: center;">
+    <button onclick="openTenantModal()" style="background-color:#28a745; color:white; border:none; border-radius:6px; padding:12px 30px; cursor:pointer; font-size:1.1em; font-weight:bold; box-shadow:0 2px 8px #28a74577; letter-spacing:1px;">
+        {{ 'Adaugă locatar' if language == 'ro' else 'Add Tenant' }}
+    </button>
+
+    <button id="toggle-delete-mode" onclick="toggleDeleteMode()" style="background-color:#d32f2f; color:white; border:none; border-radius:6px; padding:12px 30px; cursor:pointer; font-size:1.1em; font-weight:bold; box-shadow:0 2px 8px #d32f2f99; letter-spacing:1px;">
+        🗑️ {{ 'Eliminare' if language == 'ro' else 'Delete' }}
+    </button>
+</div>
+<div class="table-container">
+    <table id="tenant-table">
+        <tr>
+            <th>{{ 'AP' if language == 'ro' else 'APT' }}</th>
+            <th>{{ 'Nume' if language == 'ro' else 'Name' }}</th>
+            <th>{{ 'Consum Apă (mc)' if language == 'ro' else 'Water Usage (m³)' }}</th>
+            <th>{{ 'Cost Apă (Lei)' if language == 'ro' else 'Water Cost (Lei)' }}</th>
+            <th>{{ 'Suma' if language == 'ro' else 'Amount' }}</th>
+            <th>{{ 'Acțiune' if language == 'ro' else 'Action' }}</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.apartment }}</td>
+            <td style="position:relative;">
+                {{ user.name }}
+                <form method="POST" action="{{ url_for('delete_tenant', user_id=user.id) }}" style="display:inline;">
+    <button type="submit" class="remove-btn-row" style="display:none; background:none; border:none; color:#d32f2f; font-size:1.3em; font-weight:bold; position:relative; left:8px; top:2px; cursor:pointer;">
+        ❌
+    </button>
+</form>
+            </td>
+            <td id="water-consumption-{{ user.id }}">{{ "%.2f"|format(water_data[user.id]|default(0)) }}</td>
+            <td id="water-cost-{{ user.id }}">{{ "%.2f"|format((water_data[user.id]|default(0) * water_price - user.amount_paid)) }}</td>
+            <td>
+                <form method="POST" action="#" onsubmit="event.preventDefault();">
+                    <input type="number" name="amount_paid" step="0.01" placeholder="{{ 'Suma' if language == 'ro' else 'Amount' }}" required>
+                    <input type="submit" value="{{ 'Plătește' if language == 'ro' else 'Pay' }}">
+                </form>
+            </td>
+            <td>
+                {% if (water_data[user.id]|default(0) * water_price - user.amount_paid) <= 0 %}
+                    <span style="color: green;">{{ 'Plătit' if language == 'ro' else 'Paid' }}</span>
+                {% else %}
+                    <span style="color: red;">{{ 'Neplătit' if language == 'ro' else 'Unpaid' }}</span>
+                {% endif %}
+
+            </td>
+        </tr>
+        {% endfor %}
+        <!-- Locatarii adăugați cu JS vor apărea aici -->
+    </table>
+</div>
+<script>
+let tenantId = 1;
+let deleteMode = false;
+function toggleDeleteMode() {
+    deleteMode = !deleteMode;
+    const btns = document.querySelectorAll('.remove-btn-row');
+    btns.forEach(btn => {
+        btn.style.display = deleteMode ? 'inline-block' : 'none';
+    });
+    // Schimbă culoarea butonului Eliminare când e activ
+    document.getElementById('toggle-delete-mode').style.backgroundColor = deleteMode ? '#d32f2f' : '#ff9800';
+}
+function removeTenantRow(btn) {
+    const row = btn.closest('tr');
+    row.parentNode.removeChild(row);
+}
+function openTenantModal() {
+    document.getElementById('tenantModal').style.display = 'block';
+    document.getElementById('modalApartment').value = '';
+    document.getElementById('modalName').value = '';
+}
+function closeTenantModal() {
+    document.getElementById('tenantModal').style.display = 'none';
+}
+function submitTenantModal() {
+    const apartment = document.getElementById('modalApartment').value.trim();
+    const name = document.getElementById('modalName').value.trim();
+    if (!apartment || !name) {
+        alert('{{ 'Completează toate câmpurile!' if language == 'ro' else 'Please fill in all fields!' }}');
+        return;
+    }
+    addTenant(apartment, name);
+    closeTenantModal();
+}
+function addTenant(apartment, name) {
+    const table = document.getElementById('tenant-table');
+    const row = table.insertRow(-1);
+    row.setAttribute('data-tenant-id', tenantId);
+    row.innerHTML = `
+        <td>${apartment}</td>
+        <td style="position:relative;">${name}<button class=\"remove-btn-row\" style=\"display:${deleteMode ? 'inline-block' : 'none'}; background:none; border:none; color:#d32f2f; font-size:1.3em; font-weight:bold; position:relative; left:8px; top:2px; cursor:pointer;\" onclick=\"removeTenantRow(this)\">❌</button></td>
+        <td id="water-consumption-new-${tenantId}">0.00</td>
+        <td id="water-cost-new-${tenantId}">0.00</td>
+        <td>
+            <form onsubmit="event.preventDefault(); payTenantStatus(this, ${tenantId});">
+                <input type="number" step="0.01" placeholder="{{ 'Suma' if language == 'ro' else 'Amount' }}" style="width:120px; text-align:left;">
+                <input type="submit" value="{{ 'Plătește' if language == 'ro' else 'Pay' }}" style="background:#5cb85c;color:white;border:none;border-radius:4px;padding:6px 12px;cursor:pointer;">
+            </form>
+        </td>
+        <td>
+            <span id="status-new-${tenantId}" style="color: red;">{{ 'Neplătit' if language == 'ro' else 'Unpaid' }}</span>
+        </td>
+
+    `;
+    tenantId++;
+}
+function removeTenant(btn) {
+    const row = btn.closest('tr');
+    row.parentNode.removeChild(row);
+}
+function removeAllTenants() {
+    const table = document.getElementById('tenant-table');
+    while (table.rows.length > 1) {
+        table.deleteRow(1);
+    }
+}
+function payTenantStatus(form, id) {
+    // Poți adăuga validare dacă vrei să nu marchezi ca plătit dacă suma e 0
+    const statusSpan = document.getElementById('status-new-' + id);
+    if (statusSpan) {
+        statusSpan.textContent = '{{ 'Plătit' if language == 'ro' else 'Paid' }}';
+        statusSpan.style.color = 'green';
+    }
+    // Opțional: poți reseta inputul de sumă
+    form.querySelector('input[type=number]').value = '';
+}
+</script>
+<!-- Modal pentru adăugare locatar -->
+<div id="tenantModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeTenantModal()">&times;</span>
+    <h2>{{ 'Adaugă locatar' if language == 'ro' else 'Add tenant' }}</h2>
+    <form method="POST" action="/add_tenant">
+      <label for="modalApartment">{{ 'Apartament' if language == 'ro' else 'Apartment' }}</label>
+      <input type="text" id="modalApartment" name="apartment" placeholder="ex: 12" required>
+      <label for="modalName">{{ 'Nume' if language == 'ro' else 'Name' }}</label>
+      <input type="text" id="modalName" name="name" placeholder="ex: Popescu" required>
+      <button type="submit" style="margin-top:15px;background:#28a745;color:white;border:none;border-radius:4px;padding:8px 15px;cursor:pointer;width:100%;">{{ 'Adaugă' if language == 'ro' else 'Add' }}</button>
+    </form>
+  </div>
+</div>
+<style>
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px 30px;
+  border: 1px solid #888;
+  border-radius: 8px;
+  width: 320px;
+  position: relative;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+}
+.close {
+  color: #aaa;
+  position: absolute;
+  right: 16px;
+  top: 8px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close:hover {
+  color: #dc3545;
+}
+.modal-content label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.modal-content input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+</style>
+<style>
+.remove-btn {
+    color: white;
+    background: #dc3545;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.remove-btn:hover {
+    background: #a71d2a;
+}
+#tenant-table input[type="text"], #tenant-table input[type="number"] {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+#tenant-table input[type="submit"] {
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    margin-left: 6px;
+}
+#tenant-table input[type="submit"]:hover {
+    background-color: #449d44;
+}
+#tenant-table tr:hover {
+    background-color: #f2f2f2;
+}
+#tenant-table th, #tenant-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+#tenant-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+.table-container {
+    margin: 20px;
+    overflow-x: auto;
+}
+</style>
+<script>
+// Actualizare consum apă la fiecare 30 de secunde
+setInterval(function() {
+      fetch('/update_water')
+        .then(response => {
+          if (response.ok) {
+            location.reload();
+          }
+        });
+    }, 30000);
+</script>
+{% endblock %}
