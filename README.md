@@ -1,8 +1,9 @@
 # Proiect Management al Consumului de Apa
-Proiectul consta in unul de tip management care va face management la consumul de apa dintr-un bloc.
-Proiectul va trebuii sa arate persoanele din bloc, consumul de apa pe care l-a facut persoana si suma pe care o are de platit.
 
-<b> Updates: </b>
+# Ce face acest program?
+Acest program face management la consumul de apa, la persoanele dintr-un bloc anume.
+
+# Updates:
 
 <b> 22/3 </b>
 
@@ -56,3 +57,13 @@ Pot spune ca am facut schimbari majore la proiect astazi:\
 🔃 Mici schimbari in designul paginii\
 ❤ Mai ingrijit
    
+<b> 23/03 </b>
+
+<b> Update final </b>\
+Proiectul a ajuns la un update final, in care sper ca nu va ma fi nevoie de schimbari majori si ca ruleaza fara erori masive.
+
+<b> Ce am adaugat in plus? </b>\
+➕ Blocurile acum isi au propia lista de locatari
+
+<b> Ce modificari am facut? </b>\
+🔃 Am facut niste modificari la butonul de "Schimba Limba", deoarece ma trimitea pe o alta pagina mai veche
