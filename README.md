@@ -48,7 +48,7 @@ Proiectul va trebuii sa arate persoanele din bloc, consumul de apa pe care l-a f
 
 Pot spune ca am facut schimbari majore la proiect astazi:\
 ➕ Am adaugat o pagina noua numita blocuri:\
-    -Aceasta pagina va fi noua pagina principala, care va arata blocuri pe pe care le manageriez\
+    -Aceasta pagina va fi noua pagina principala, care va arata blocuri pe care le manageriez\
     -Pagina contine un buton "Detalii", pe care la aparasea butonul veti fi trimis la pagina cu persoanele din blocul respectiv\
     -Pagina iti da posibilitatea de a adauga un bloc si de a elimina un bloc anume din lista cu blocuri\
     -Blocurile pe care le adaugi sunt salvate imediat\
