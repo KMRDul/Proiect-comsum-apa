@@ -16,16 +16,16 @@ Proiectul va trebuii sa arate persoanele din bloc, consumul de apa pe care l-a f
 <b> 26/3 </b>
 
 ➕ Sistem de cache-ing\
-➕ Adaugat de clase in program\
+➕ Progmramul contine functii class acum\
 🔃 Modificat lista de locatari, acesta contine nume false acum\
 🔃 Modificat coloana care confirma daca locatarul a platit consumul de apa sau nu, acesta va arata ca "Platit" daca a platit, iar daca nu a platit va arata "Neplatit"
 
 <b> 30/3 </b>
 
 ➕ Pagina de login/logout, ca default va fi admin/admin\
-➖ Suma datorata nu mai exista in lista de consum\
 ➕ Adaugat consumul de apa in timp real, la fiecare 5 secunde se va actualiza consumul de apa la 3 locatari deodata\
 ➕ Update la lista de consum, acum va arata costul consumului de apa\
+➖ Suma datorata nu mai exista in lista de consum\
 🔃 Modificari aduse la butonul de schimba limba, acum va schimba limba din ENG -> RO, vice-versa
 
 <b> 03/4 </b>
@@ -43,3 +43,16 @@ Proiectul va trebuii sa arate persoanele din bloc, consumul de apa pe care l-a f
 
 ➕ Am adaugat buton de Dark mode\
 ➕ Am adaugat butoane de adaugare respectiv eliminare persoana din bloc
+
+<b> 19/03 </b>
+
+Pot spune ca am facut schimbari majore la proiect astazi:\
+➕ Am adaugat o pagina noua numita blocuri:\
+    -Aceasta pagina va fi noua pagina principala, care va arata blocuri pe care le manageriez\
+    -Pagina contine un buton "Detalii", pe care la aparasea butonul veti fi trimis la pagina cu persoanele din blocul respectiv\
+    -Pagina iti da posibilitatea de a adauga un bloc si de a elimina un bloc anume din lista cu blocuri\
+    -Blocurile pe care le adaugi sunt salvate imediat\
+    -Cand vizualizezi un bloc anume, acesta va contine deja cativa oameni pe care poti sa ii elimini din lista sau sa adaugi tu altii\
+🔃 Mici schimbari in designul paginii\
+❤ Mai ingrijit
+   
