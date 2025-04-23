@@ -48,9 +48,12 @@
             <div class="title-clock" style="flex:1;text-align:center;">
                 <h1>{{ 'Management Consum Apă' if language == 'ro' else 'Water Consumption Management' }}</h1>
             </div>
+            <button id="theme-toggle" aria-label="Toggle dark/light mode" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;outline:none;cursor:pointer;font-size:1.5em;transition:color 0.2s;z-index:10;">
+                <span id="theme-toggle-icon">🌙</span>
+            </button>
             {% if 'username' in session %}
-            <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);">
-                <a href="{{ url_for('change_language') }}" title="{{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}" style="padding:8px 15px;text-decoration:none;color:white;background-color:#007bff;border-radius:4px;font-weight:bold;font-size:1em;">
+            <div style="position:absolute;right:56px;top:50%;transform:translateY(-50%);">
+                <a href="{{ url_for('change_language', next=request.full_path) }}" title="{{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}" style="padding:8px 15px;text-decoration:none;color:white;background-color:#007bff;border-radius:4px;font-weight:bold;font-size:1em;">
                     🌐 {{ 'Schimbă limba' if language == 'ro' else 'Change Language' }}
                 </a>
             </div>
@@ -78,5 +81,90 @@
         updateClock();
         setInterval(updateClock, 60000);
     </script>
+<style>
+    
+    body, html {
+        transition: background 0.3s, color 0.3s;
+    }
+    body.dark-mode, html.dark-mode {
+        background: #181a1b !important;
+        color: #e7e7e7 !important;
+    }
+    body.dark-mode .container,
+    html.dark-mode .container {
+        background: #23272b !important;
+        color: #e7e7e7 !important;
+        box-shadow: 0 8px 32px #0008, 0 1.5px 6px #0004;
+    }
+    body.dark-mode .table-container,
+    html.dark-mode .table-container {
+        background: #23272b !important;
+        color: #e7e7e7 !important;
+    }
+    body.dark-mode .tenant-modal-form,
+    html.dark-mode .tenant-modal-form {
+        background: #23272b !important;
+        color: #e7e7e7 !important;
+        box-shadow: 0 8px 32px #0008, 0 1.5px 6px #0004;
+    }
+    body.dark-mode #tenant-table,
+    html.dark-mode #tenant-table {
+        background: #23272b !important;
+        color: #e7e7e7 !important;
+    }
+    body.dark-mode #tenant-table th,
+    body.dark-mode #tenant-table td,
+    html.dark-mode #tenant-table th,
+    html.dark-mode #tenant-table td {
+        background: #23272b !important;
+        color: #e7e7e7 !important;
+        border-color: #444 !important;
+    }
+    body.dark-mode .modal-overlay,
+    html.dark-mode .modal-overlay {
+        background: rgba(0,0,0,0.75) !important;
+    }
+    body.fade-theme, html.fade-theme {
+        transition: background 0.3s, color 0.3s;
+    }
+</style>
+<script>
+(function() {
+    const body = document.body;
+    const html = document.documentElement;
+    const toggleBtn = document.getElementById('theme-toggle');
+    const icon = document.getElementById('theme-toggle-icon');
+    function setTheme(dark) {
+        body.classList.add('fade-theme');
+        html.classList.add('fade-theme');
+        if (dark) {
+            body.classList.add('dark-mode');
+            html.classList.add('dark-mode');
+            icon.textContent = '☀️';
+        } else {
+            body.classList.remove('dark-mode');
+            html.classList.remove('dark-mode');
+            icon.textContent = '🌙';
+        }
+        setTimeout(() => {
+            body.classList.remove('fade-theme');
+            html.classList.remove('fade-theme');
+        }, 300);
+    }
+    function getTheme() {
+        return localStorage.getItem('theme') === 'dark';
+    }
+    function toggleTheme() {
+        const dark = !getTheme();
+        setTheme(dark);
+        localStorage.setItem('theme', dark ? 'dark' : 'light');
+    }
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', toggleTheme);
+    }
+    // On load, set theme
+    setTheme(getTheme());
+})();
+</script>
 </body>
 </html>

@@ -39,10 +39,18 @@
             max-width: 400px;
             margin: 0 auto;
         }
+        body.dark-mode .login-container, html.dark-mode .login-container {
+            background-color: #23272b !important;
+            color: #e7e7e7 !important;
+            box-shadow: 0 8px 32px #0008, 0 1.5px 6px #0004;
+        }
         .login-form {
             display: flex;
             flex-direction: column;
             gap: 1rem;
+        }
+        body.dark-mode .login-form, html.dark-mode .login-form {
+            color: #e7e7e7 !important;
         }
         .form-group {
             display: flex;
@@ -53,12 +61,29 @@
             color: #555;
             font-size: 0.9rem;
         }
+        body.dark-mode .form-group label,
+        html.dark-mode .form-group label {
+            color: #e7e7e7 !important;
+        }
         .form-group input {
             padding: 0.75rem;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 1rem;
+            max-width: 380px;
+            margin: 0 auto;
+            display: block;
         }
+        body.dark-mode .form-group input,
+html.dark-mode .form-group input {
+    background: #fff !important;
+    color: #e7e7e7 !important;
+    border: 1px solid #444 !important;
+}
+        body.dark-mode .form-group input::placeholder,
+html.dark-mode .form-group input::placeholder {
+    color: #b0b0b0 !important;
+}
         .login-button {
             background-color: #4CAF50;
             color: white;

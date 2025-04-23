@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<div style="max-width:600px;margin:40px auto 0 auto;padding:32px 24px 24px 24px;background:#fff;border-radius:12px;box-shadow:0 4px 32px #0001;">
+<div class="block-list-container" style="max-width:600px;margin:40px auto 0 auto;padding:32px 24px 24px 24px;background:#fff;border-radius:12px;box-shadow:0 4px 32px #0001;">
     <h2 style="text-align:center;">{{ 'Blocurile mele' if language == 'ro' else 'My Buildings' }}</h2>
     <hr style="margin:18px 0 24px 0;">
     <!-- Formular adaugare bloc -->
@@ -28,5 +28,20 @@
     {% endfor %}
     </ul>
 </div>
+<style>
+body.dark-mode .block-list-container, html.dark-mode .block-list-container {
+    background: #23272b !important;
+    color: #e7e7e7 !important;
+    box-shadow: 0 8px 32px #0008, 0 1.5px 6px #0004;
+}
+body.dark-mode .block-item, html.dark-mode .block-item {
+    background: #23272b !important;
+    color: #e7e7e7 !important;
+    border-color: #444 !important;
+}
+body.dark-mode .block-item a, html.dark-mode .block-item a {
+    color: #fff !important;
+}
+</style>
 
 {% endblock %}

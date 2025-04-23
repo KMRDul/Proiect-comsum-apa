@@ -184,6 +184,9 @@ def update_payment(user_id):
 @login_required
 def change_language():
     session['language'] = 'en' if session.get('language', 'ro') == 'ro' else 'ro'
+    next_url = request.args.get('next')
+    if next_url:
+        return redirect(next_url)
     return redirect(url_for('index'))
 
 @app.route('/login_language')
@@ -240,37 +243,54 @@ def blocuri():
             delete_block(request.form['delete_block_id'])
             return redirect(url_for('blocuri'))
         else:
-            name = request.form.get('block_name')
-            address = request.form.get('block_address')
-            if name and address:
-                add_block(name, address)
-                return redirect(url_for('blocuri'))
-    blocks = get_blocks()
-    return render_template('template2.html', blocks=blocks, language=session.get('language', 'ro'))
+            try:
+                name = request.form.get('block_name')
+                address = request.form.get('block_address')
+                if name and address:
+                    add_block(name, address)
+                    return redirect(url_for('blocuri'))
+            except Exception as e:
+                print(f"Eroare la adăugare bloc: {e}")
+    try:
+        blocks = get_blocks()
+        return render_template('template2.html', blocks=blocks, language=session.get('language', 'ro'))
+    except Exception as e:
+        print(f"Eroare la afișare blocuri: {e}")
+        return 'A apărut o eroare la afișarea blocurilor.', 500
 
 # Detalii bloc (mock)
-@app.route('/add_tenant', methods=['POST'])
+@app.route('/bloc/<int:block_id>/add_tenant', methods=['POST'])
 @login_required
-def add_tenant():
-    apartment = request.form['apartment']
-    name = request.form['name']
-    # Suma implicită de plată pentru un locatar nou (poate fi ajustată)
-    amount_due = 100
-    add_user(name, apartment, amount_due)
-    return redirect(url_for('block_detail', block_id=1))
+def add_tenant(block_id):
+    try:
+        apartment = request.form['apartment']
+        name = request.form['name']
+        amount_due = 100
+        from database import add_user
+        add_user(name, apartment, amount_due, block_id)
+        return redirect(url_for('block_detail', block_id=block_id))
+    except Exception as e:
+        print(f"Eroare la adăugare locatar: {e}")
+        return 'A apărut o eroare la adăugarea locatarului.', 500
 
 @app.route('/bloc/<int:block_id>')
 @login_required
 def block_detail(block_id):
-    from database import get_blocks
-    blocks = get_blocks()
-    block = next((b for b in blocks if b['id'] == block_id), None)
-    if not block:
-        return 'Bloc inexistent', 404
-    water_db = get_db()
-    users_db = get_users_db()
-    users = users_db.execute('SELECT * FROM users').fetchall()
-    # Scramble numele locatarilor doar pentru Bloc B și Bloc C
+    try:
+        from database import get_blocks, get_users
+        blocks = get_blocks()
+        block = next((b for b in blocks if b['id'] == block_id), None)
+        if not block:
+            return 'Bloc inexistent', 404
+        water_db = get_db()
+        users = get_users(block_id=block_id)
+        # Scramble numele locatarilor doar pentru Bloc B și Bloc C
+        # restul funcției rămâne neschimbat
+        # ...
+        # (nu modificăm aici, doar protejăm începutul cu try)
+    except Exception as e:
+        print(f"Eroare la afișare detalii bloc: {e}")
+        return 'A apărut o eroare la afișarea detaliilor blocului.', 500
     if block_id in [2, 3]:
         import random
         users = list(users)
@@ -314,8 +334,7 @@ def block_detail(block_id):
                                         (user['id'],)).fetchone()
         water_data[user['id']] = last_consumption['consumption'] if last_consumption else 0
     water_db.close()
-    users_db.close()
-    return render_template('template_page.html', users=users, water_data=water_data, water_price=6, block_id=block_id, block_name=block['name'], block_address=block['address'])
+    return render_template('template_page.html', users=users, water_data=water_data, water_price=6, block_id=block_id, block_name=block['name'], block_address=block['address'], block=block)
 
 @app.route('/delete_tenant/<int:user_id>', methods=['POST'])
 @login_required

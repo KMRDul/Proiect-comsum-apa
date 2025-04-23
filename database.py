@@ -22,7 +22,8 @@ def init_db():
             apartment TEXT NOT NULL,
             amount_due REAL,
             amount_paid REAL DEFAULT 0,
-            is_paid BOOLEAN DEFAULT 0
+            is_paid BOOLEAN DEFAULT 0,
+            block_id INTEGER NOT NULL
         )
     ''')
     
@@ -36,28 +37,31 @@ def init_db():
         ]
         for i, name in enumerate(fake_names, 1):
             amount_due = random.uniform(50, 150)  # Generăm suma o singură dată pentru fiecare utilizator
-            cursor.execute('INSERT INTO users (name, apartment, amount_due) VALUES (?, ?, ?)',
-                       (name, str(i), amount_due))
+            cursor.execute('INSERT INTO users (name, apartment, amount_due, block_id) VALUES (?, ?, ?, ?)',
+                       (name, str(i), amount_due, 1))  # Demo: toți inițial în blocul 1
     
     conn.commit()
     conn.close()
 
-def get_users():
+def get_users(block_id=None):
     db_path = os.path.join(DATA_DIR, 'users.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, apartment, amount_due, amount_paid, is_paid FROM users')
+    if block_id is not None:
+        cursor.execute('SELECT id, name, apartment, amount_due, amount_paid, is_paid FROM users WHERE block_id = ?', (block_id,))
+    else:
+        cursor.execute('SELECT id, name, apartment, amount_due, amount_paid, is_paid FROM users')
     users = cursor.fetchall()
     conn.close()
     # Convertim amount_due și amount_paid în float
     return [(user[0], user[1], user[2], float(user[3]), float(user[4]), user[5]) for user in users]
 
-def add_user(name, apartment, amount_due):
+def add_user(name, apartment, amount_due, block_id):
     db_path = os.path.join(DATA_DIR, 'users.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO users (name, apartment, amount_due) VALUES (?, ?, ?)',
-                   (name, apartment, amount_due))
+    cursor.execute('INSERT INTO users (name, apartment, amount_due, block_id) VALUES (?, ?, ?, ?)',
+                   (name, apartment, amount_due, block_id))
     conn.commit()
     conn.close()
 
@@ -71,6 +75,10 @@ def delete_user(user_id):
 
 def get_fake_users():
     return get_users()  # Acum returnăm utilizatorii reali din baza de date
+
+def init_users_table():
+    """Compat function for legacy scripts. Calls init_db to initialize the users table."""
+    init_db()
 
 # --- Blocuri ---
 def init_blocks_table():
