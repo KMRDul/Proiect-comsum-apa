@@ -18,6 +18,7 @@ from functions.api import get_current_time, render_template_page
 
 # Definim calea de bază a proiectului (unde se află acest fișier)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Definim calea către directoarele principale de date, template-uri și fișiere statice
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
@@ -32,6 +33,7 @@ for directory in [DATA_DIR, TEMPLATE_DIR, STATIC_DIR]:
 print(f"Template directory: {TEMPLATE_DIR}")
 print(f"Template files: {os.listdir(TEMPLATE_DIR)}")
 print(f"Static directory: {STATIC_DIR}")
+
 if os.path.exists(STATIC_DIR):
     print(f"Static files: {os.listdir(STATIC_DIR)}")
 

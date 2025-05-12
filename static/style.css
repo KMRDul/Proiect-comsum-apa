@@ -94,6 +94,7 @@ th, td {
 th {
     background-color: #f2f2f2; /* Fundal pentru antet */
 }
+
 .language-button {
     position: absolute; /* Poziționează butonul în colțul din dreapta sus */
     top: 10px; /* Distanța de la partea de sus */
@@ -115,4 +116,38 @@ th {
 
 .language-button a:hover {
     background-color: #4cae4c; /* Schimbă culoarea la hover */
+}
+
+/* Stiluri pentru modul întunecat */
+body.dark-mode input[type="text"],
+body.dark-mode input[type="password"],
+body.dark-mode input[type="number"],
+html.dark-mode input[type="text"],
+html.dark-mode input[type="password"],
+html.dark-mode input[type="number"] {
+    background-color: #333;
+    color: #fff;
+    border-color: #555;
+}
+
+body.dark-mode .tenant-modal-field input,
+html.dark-mode .tenant-modal-field input {
+    background-color: #333;
+    color: #fff;
+    border-color: #555;
+}
+
+body.dark-mode .tenant-modal-field label,
+html.dark-mode .tenant-modal-field label {
+    color: #e7e7e7;
+}
+
+body.dark-mode .tenant-modal-title,
+html.dark-mode .tenant-modal-title {
+    color: #e7e7e7;
+}
+
+body.dark-mode input::placeholder,
+html.dark-mode input::placeholder {
+    color: #aaa;
 }
