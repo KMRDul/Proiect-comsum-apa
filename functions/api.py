@@ -15,23 +15,19 @@ def get_romania_time():
 
 # Funcție pentru obținerea orei curente din România ca răspuns JSON
 def get_current_time():
-    """Obține ora curentă din România și o returnează ca JSON"""
-    # Apelează funcția get_romania_time() definită în acest modul
-    # și returnează rezultatul ca răspuns JSON
     return jsonify(get_romania_time())
 
 # Funcție pentru afișarea paginii de template demonstrativă
 def render_template_page():
     # Obținem limba curentă din sesiune (implicit română)
     language = session.get('language', 'ro')
-    
-    # Deschidem conexiunile la bazele de date
+
     water_db = get_db()
     users_db = get_users_db()
     
     # Obținem toți utilizatorii din baza de date
     users = users_db.execute('SELECT * FROM users').fetchall()
-    
+
     # Dicționar pentru stocarea datelor despre consumul de apă pentru fiecare utilizator
     water_data = {}
     
@@ -42,11 +38,8 @@ def render_template_page():
                                         (user['id'],)).fetchone()
         # Salvăm consumul sau 0 dacă nu există înregistrări
         water_data[user['id']] = last_consumption['consumption'] if last_consumption else 0
-    
-    # Închide conexiunile la bazele de date
+
     water_db.close()
     users_db.close()
-    
-    # Renderăm template-ul cu datele obținute
-    # Transmitem limba, lista de utilizatori, datele despre consum și prețul apei
+
     return render_template('template_page.html', language=language, users=users, water_data=water_data, water_price=6)

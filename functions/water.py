@@ -64,12 +64,11 @@ def update_water_consumption():
         water_db.execute('''INSERT INTO water_consumption (user_id, consumption) 
                         VALUES (?, ?)''', (user['id'], current_consumption))
     
-    # Salvăm modificările în baza de date
+
     water_db.commit()
-    # Închidem conexiunile la bazele de date
     water_db.close()
     users_db.close()
-    # Returnăm un răspuns JSON cu status de succes
+
     return jsonify({"status": "success"})
 
 # Funcție pentru actualizarea plăților unui utilizator
@@ -84,8 +83,6 @@ def update_user_payment(user_id, amount_paid):
     # la suma existentă în baza de date
     users_db.execute('UPDATE users SET amount_paid = amount_paid + ? WHERE id = ?', 
              (amount_paid, user_id))
-    
-    # Salvăm modificările în baza de date
+
     users_db.commit()
-    # Închide conexiunea la baza de date
     users_db.close()

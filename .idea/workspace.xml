@@ -7,6 +7,16 @@
     <list default="true" id="bbaf9e92-4c1c-4d8d-b178-61438f4f745e" name="Changes" comment="#">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/database.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/users.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/users.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/blocks.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/blocks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/language.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/language.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/tenants.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/tenants.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/water.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/water.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

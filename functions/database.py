@@ -112,7 +112,6 @@ def get_fake_users():
 
 # Funcție de compatibilitate pentru script-uri vechi
 def init_users_table():
-    """Compat function for legacy scripts. Calls init_db to initialize the users table."""
     init_db()
 
 # --- Blocuri ---

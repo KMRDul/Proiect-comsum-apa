@@ -1,11 +1,9 @@
-# Importăm modulele necesare pentru funcționalitatea aplicației
 import os  # pentru operații cu sistemul de fișiere
 import logging  # pentru logarea evenimentelor
-from functions.cache import cache # pentru cache custom (presupus definit în cache.py)
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify  # importăm funcții principale din Flask
+from functions.cache import cache
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from jinja2 import FileSystemLoader  # pentru încărcarea template-urilor Jinja2
 
-# Importăm funcțiile din folderul functions
 from functions.database import set_db_paths, get_db, get_users_db, init_water_db, init_db, init_blocks_table
 from functions.database import add_user, get_users, get_fake_users, delete_user
 from functions.database import add_block, get_blocks, delete_block
@@ -16,10 +14,7 @@ from functions.blocks import ensure_default_blocks, manage_blocks, get_block_det
 from functions.tenants import add_tenant_to_block, delete_tenant_from_block
 from functions.api import get_current_time, render_template_page
 
-# Definim calea de bază a proiectului (unde se află acest fișier)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# Definim calea către directoarele principale de date, template-uri și fișiere statice
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
@@ -62,24 +57,18 @@ set_db_paths(DATABASE_PATH, USERS_DB_PATH, DATA_DIR)
 init_db()
 init_water_db()
 
-# Inițierea sistemului de cache pentru aplicație
-# Folosim cache-ul pentru a îmbunătăți performanța aplicației
 cache.init_app(app)
 
-# Procesor de context pentru a injecta limba curentă în toate template-urile
-# Astfel, toate template-urile vor avea acces la variabila 'language'
 @app.context_processor
 def inject_language_context():
     return inject_language()
 
 # Ruta pentru pagina de login
-# Acceptă atât GET (afișare formular) cât și POST (procesare formular)
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     return process_login()
 
 # Ruta pentru delogare
-# Șterge informațiile de sesiune și redirecționează către pagina de login
 @app.route('/logout')
 def logout():
     return process_logout()
@@ -91,8 +80,8 @@ def logout():
 def index():
     # Obținem datele despre utilizatori și consumul de apă
     users, water_data = get_water_data()
-    # Renderăm template-ul index.html cu datele obținute
-    # Prețul apei este setat la 6 lei/unitate
+
+    # Renderăm template-ul index.html cu datele obținute. Prețul apei este setat la 6 lei/unitate.
     return render_template('index.html', users=users, water_data=water_data, water_price=6)
 
 # Rută pentru actualizarea consumului de apă
@@ -107,11 +96,8 @@ def update_water():
 @app.route('/update_payment/<int:user_id>', methods=['POST'])
 @login_required
 def update_payment(user_id):
-    # Obținem suma plătită din formular
     amount_paid = request.form['amount_paid']
-    # Actualizăm plata utilizatorului
     update_user_payment(user_id, amount_paid)
-    # Redirecționăm către pagina principală după actualizarea plății
     return redirect(url_for('index'))
 
 # Rută pentru schimbarea limbii aplicației pentru utilizatorii autentificați
@@ -139,10 +125,8 @@ def time_endpoint():
 def template_page():
     return render_template_page()
 
-# Inițializăm tabela de blocuri la pornirea aplicației
 init_blocks_table()
 
-# Asigurăm existența blocurilor implicite în baza de date
 ensure_default_blocks()
 
 # Pagina cu blocurile manageriate de utilizator (pagina principală după autentificare)
